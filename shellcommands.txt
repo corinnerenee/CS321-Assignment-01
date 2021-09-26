@@ -1,0 +1,7 @@
+MSHpwd
+MSHcopy
+MSHps
+MSHdf
+MSHsearch
+MSHhistory
+MSHlogout

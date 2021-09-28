@@ -88,7 +88,6 @@ void user_login()
      //open file
     ifstream myfile;
     myfile.open("info.txt");
-    getline(myfile, vU);
     getline(myfile, vP);
   
     //take user input
@@ -108,7 +107,10 @@ void user_login()
     if (vP == encryptP){
         cout << "Login Successful\n";
         return;
+    }else if(vP != encryptP){
+      cout << "Password incorrect, please try again";
     }
+    
     /*else if (vP != encryptP){
 
       for (int i = 0; i < tries; i++){
@@ -138,7 +140,6 @@ void change_pw(){
 	cout << "Change password function: \n";
 	string password, encryptP;
 	string vP, vU;
-	const char* salt = "03";
 	int tries = 3;
 	int iFlag = 0; //for exiting once condition is met
 
@@ -149,14 +150,15 @@ void change_pw(){
 	encryptP = crypt(password.c_str(), "22");
 	
 	 //open file
-	ifstream myfile;
+	ofstream myfile;
 	myfile.open("info.txt");
-	getline(myfile, vU); //Skip username
-	getline(myfile, vP);
-	myfile >> encryptP;
+	//getline(myfile, vU); //Skip username
+	//getline(myfile, vP);
+	myfile << encryptP;
 
 	cout << "Password successfully changed.\n";
 }
+
 int read_command(string command, string *parameter)
 {
 	int opcode=0;
@@ -164,7 +166,7 @@ int read_command(string command, string *parameter)
 	
 	cin >> commandString; //read in command
 	istringstream cmdStream(commandString);
-
+  int i = 0;
 	cmdStream >> command;
 	/*for (int i = 0; i < 7; i++) {
 		string comp = (string)commands[i];
@@ -172,7 +174,8 @@ int read_command(string command, string *parameter)
 			opcode = i + 1;
 		}
 	}*/
-	
+	char comp = command[i];
+
 	if (command.compare("MSHpwd") == 0) {
 		opcode = 1;
 	}
@@ -213,28 +216,26 @@ void exec_command(int opcode, string *parameters)
 		//printf("you are currently in %s", get_current_dir_name());
 		break;
     case 2: //MSHcopy - system.cp
-		//system("cp " + );
+    //copy();
 		break;
     case 3: //MSHps - ps -ef - displays status of processes
-		system("ps -ef");
+		system("ps -ef | grep ");
 		break;
     case 4: //MSHdf - display disk space occupied by file system
 		system("df");
 		break;
-    case 5: //MSHsearch - search word from file using grep
-      //break;
+    case 5: //MSHlogout - exit w/ logout code = 5;
+      cout << "Child: exit with status = LOGOUTCODE\n";
+      exit(LOGOUTCODE);
+      break;
     case 6: //MSHhistory - if cmd is valid, add history to table & displayTable() to list all previous commands
 		system("history");
 		break;
-    case 7: //MSHlogin - use logout code?
+    case 7: //MSHsearch - search word from file using grep
       //break;
     default:
       cout << "Invalid command\n";
       break;
 	}
-  	if (opcode == LOGOUTCODE) {
-    	  cout<<"Child: exit with status = LOGOUTCODE\n";
-    	  exit(LOGOUTCODE);
-  	}
 	return;
 }
